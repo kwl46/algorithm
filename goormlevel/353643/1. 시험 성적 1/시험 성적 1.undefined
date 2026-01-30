@@ -1,0 +1,23 @@
+# -*- coding: utf-8 -*-
+# UTF-8 encoding when using korean
+N = int(input())
+
+a_lst = list(map(int,input().split()))
+b_lst = list(map(int,input().split()))
+
+c_lst = []
+
+for i in range(N):
+	a = a_lst[i]
+	b = b_lst[i]
+	cnt = 0
+	for j in range(N):
+		a_ = a_lst[j]
+		b_ = b_lst[j]
+		if a < a_ and b < b_:
+			cnt += 1
+
+	c_lst.append(cnt)
+
+print(*c_lst)
+		
