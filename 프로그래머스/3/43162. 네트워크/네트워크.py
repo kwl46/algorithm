@@ -1,7 +1,7 @@
 def solution(n, computers):
     answer = 0
     parents = [i for i in range(n)]
-    
+    rank = [0] * (n+1)
     def find(a):
         if parents[a] == a:
             return a
@@ -13,12 +13,13 @@ def solution(n, computers):
         a = find(a)
         b = find(b)
         
-        if a < b:
+        if rank[a] < rank[b]:
             parents[b] = a
-        else:
+        elif rank[b] < rank[a]:
             parents[a] = b
-
-    s = set()
+        else:
+            parents[b] = a
+            rank[a] += 1
     
     for i in range(len(computers)):
         computer = computers[i]
@@ -26,12 +27,10 @@ def solution(n, computers):
             if computer[j] == 1:
                 union(i,j)
 
+    ans = set()
     for i in range(n):
-        find(i)
-    
-    for p in parents:
-        s.add(p)
-        
-    answer = len(s)
+        ans.add(find(i))
+
+    answer = len(ans)
 
     return answer
