@@ -1,58 +1,49 @@
-import heapq
-push = heapq.heappush
-pop = heapq.heappop
+from collections import deque
 
 def solution(board):
+    answer = 0
     N = len(board)
     M = len(board[0])
     
-    dr = [1,0,-1,0]
-    dc = [0,1,0,-1]
-    
-    hq = []
-    
     check = [[[float("inf")] * 4 for _ in range(M)] for _ in range(N)]
-
-    push(hq, (0, (0,0), 0))
-    push(hq, (0, (0,0), 1))
-    push(hq, (0, (0,0), 2))
-    push(hq, (0, (0,0), 3))
     
+    dr = [0,1,0,-1]
+    dc = [1,0,-1,0]
+    
+    dq = deque()
+    
+    dq.append((0,0,0,0))
+    dq.append((0,0,0,1))
+    dq.append((0,0,0,2))
+    dq.append((0,0,0,3))
     check[0][0][0] = 0
     check[0][0][1] = 0
     check[0][0][2] = 0
     check[0][0][3] = 0
-    answer = float("inf")
     
-    while hq:
-        cost, pos, direc = pop(hq)
-        r = pos[0]
-        c = pos[1]
+    while dq:
+        r, c, cost, direc = dq.popleft()
         
-        if r == N-1 and c == M-1:
-            answer = min(answer,cost)
-            
-            
         for i in range(4):
             next_r = r + dr[i]
             next_c = c + dc[i]
+            next_cost = 0
             
+            if direc == i:
+                next_cost = cost + 100
+            else:
+                next_cost = cost + 600
+                
             if next_r < 0 or next_r >= N or next_c < 0 or next_c >= M:
                 continue
             if board[next_r][next_c] == 1:
                 continue
-                
-            if i == direc:
-                new_cost = cost + 100
-                if check[next_r][next_c][i] < new_cost:
-                    continue
-                check[next_r][next_c][i] = new_cost
-                push(hq, (new_cost, (next_r,next_c), i))
-            else:
-                new_cost = cost + 600
-                if check[next_r][next_c][i] < new_cost:
-                    continue
-                check[next_r][next_c][i] = new_cost
-                push(hq, (new_cost, (next_r,next_c), i))
-
+            if check[next_r][next_c][i] <= next_cost:
+                continue
+            
+            check[next_r][next_c][i] = next_cost
+            dq.append((next_r, next_c,next_cost,i))
+    
+    answer = min(check[-1][-1])
+    
     return answer
