@@ -1,8 +1,3 @@
-import heapq
-
-push = heapq.heappush
-pop = heapq.heappop
-
 def convert_time(time):
     h = int(time[0:2]) * 3600
     m = int(time[3:5]) * 60
@@ -36,9 +31,7 @@ def solution(play_time, adv_time, logs):
     
     if play_t <= adv_t:
         return "00:00:00"
-    
-    hq = []
-    
+
     logs_lst = []
     
     for i in range(len(logs)):
@@ -49,41 +42,17 @@ def solution(play_time, adv_time, logs):
         e_t = convert_time(e_time)
         
         logs_lst.append((s_t, e_t))
-    
-    logs_lst.append((play_t, play_t+1))
+
     logs_lst.sort()
-    
-    ans_lst = []
-    v = 0
-    
-    for i in range(len(logs_lst)):
-        s_time = logs_lst[i][0]
-        e_time = logs_lst[i][1]
-        ans_lst.append((v, len(hq)))
-        
-        while hq:
-            if s_time >= hq[0]:
-                t = pop(hq)
-                ans_lst.append((t,len(hq)))
-                v = t
-            else:
-                break
-        v = s_time
-        
-        push(hq, e_time)
     
     map_lst = [0] * (play_t+1)
     
-    before = 0
-    cnt = 0
+    for i in range(len(logs_lst)):
+        map_lst[logs_lst[i][0]] += 1
+        map_lst[logs_lst[i][1]] -= 1
     
-    for i in range(1, len(ans_lst)):
-        for j in range(before, ans_lst[i][0]):
-            map_lst[j] = cnt
-        
-        before = ans_lst[i][0]
-        cnt = ans_lst[i][1]
-        
+    for i in range(len(map_lst)):
+        map_lst[i] = map_lst[i] + map_lst[i-1]
         
     start = 0
     cur = sum(map_lst[:adv_t])
